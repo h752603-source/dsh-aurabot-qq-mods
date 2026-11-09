@@ -17,7 +17,7 @@ import { PAGE_TEXT_SRC, taskProgressFromText, badgeHintsFromText, plus100FromTex
 // 版本只写这一处：定义和自检里的字符串都读它，省得又出现「自检写着 v0.4.0」这种事。
 // 2026-11-10 → 0.9.8：修灯牌入口点不成（命中校验把祖先当挡板）、面板读不到（改走无障碍树）、
 //   聊天证据认不出「送出了 点亮粉丝团」、余额兜底正则失效、/probe 能不花钱就点开等一堆问题。
-const VERSION = '0.9.8'
+const VERSION = '0.9.9'
 
 // 点完之后等证据的时间（ms）。放在这里，失败文案里的秒数也从它算，避免又写死一个 12。
 const EVIDENCE_WAIT_MS = 20_000
@@ -132,7 +132,7 @@ export default {
   api: 1,
   // 面板「已安装」页那一行只显示 名字 / id / 状态 / description，不读 version 字段（客户端 ModuleRow 里没有这一项），
   // 所以版本号写在 description 开头，那一行才看得见；名字里不能加（名字决定导航分组，还要留给「平台」组认「抖音」）。
-  description: 'v' + VERSION + ' · 挂抖音直播间 + 进房评论 + 续粉丝团灯牌；送礼另有一道锁（只认主人私聊）',
+  description: 'v' + VERSION + ' · 挂抖音直播间 + 进房评论 + 续粉丝团灯牌 + 私信发弹幕（/看直播 说）；送礼另有一道锁（只认主人私聊）',
 
   defaults: {
     enabled: false,
@@ -252,6 +252,45 @@ export default {
     const ownerChat = () => {
       const q = api.config().ownerQQ
       return q ? 'private:' + q : ''
+    }
+
+    // —— 2026-11-09 新功能：QQ 私信里直接命令发弹幕 ——
+    // 「/看直播 说 主播加油」→ 她在当前挂着看的直播间把这句话原样发出去。
+    // 弹幕是用主人的抖音号**公开发出去**的，所以权限跟送礼同级收紧：
+    //   只认「主人本人的 QQ 私聊」——群里（哪怕主人在）发这条命令会被直接拒绝。
+    // 但不另设面板开关：内容就是主人指定的原话，不像送礼那样花抖币，没有误触损失。
+
+    // 连发冷却：弹幕发太快容易被抖音风控（轻则限流重则封弹幕），
+    // 命令（/看直播 说）和工具（kanzhibo_say）两条路共用一个冷却。
+    // 只在**真发出去了**才计时：没进直播间、没点成发送的失败尝试不占冷却，
+    // 主人修好问题（比如先 /看直播 进）立刻就能再发。
+    const SAY_GAP_MS = 10_000
+    let lastSayAt = 0
+    const sayWaitSec = () => {
+      const left = SAY_GAP_MS - (Date.now() - lastSayAt)
+      return left > 0 ? Math.ceil(left / 1000) : 0
+    }
+
+    // 私信弹幕长度上限：抖音评论框本身就短（长了页面会截断 / 拒发），
+    // 50 个字够说一句完整的话，也能挡住误粘贴一大段。
+    const SAY_MAX_CHARS = 50
+
+    // 命令里给内容剥一层成对引号：「主播加油」/ “主播加油” → 主播加油（只剥最外层一层）
+    const stripQuotes = (s) => {
+      const t = String(s || '').trim()
+      const pairs = [['「', '」'], ['『', '』'], ['“', '”'], ['"', '"'], ["'", "'"]]
+      for (const [a, b] of pairs) {
+        if (t.length >= 2 && t.startsWith(a) && t.endsWith(b)) return t.slice(1, -1).trim()
+      }
+      return t
+    }
+
+    // 这条命令是不是主人本人的私聊里发来的。
+    //   框架的 api.command 本来就只认主人，但主人也可能在**群里**敲这条命令 ——
+    //   那时候 msg.chatId 是 group:…，照拒；必须是 private:<主人QQ> 才放行。
+    const fromOwnerDm = (msg) => {
+      const dm = ownerChat()
+      return Boolean(dm) && String((msg && msg.chatId) || '') === dm
     }
 
     /** 给主人私聊发一句话 + 可选一张图（发不出去也不影响主流程）。 */
@@ -2150,7 +2189,12 @@ export default {
         required: ['text'],
         execute: async ({ text }) => {
           if (!allOwnerTurn(sessionId)) return { ok: false, message: '只有主人能让我在直播间替他说话' }
-          return sendComment(text)
+          // 2026-11-09：和命令 /看直播 说 共用连发冷却（真发出去了才计时）
+          const wait = sayWaitSec()
+          if (wait) return { ok: false, message: '刚发过一条弹幕，' + wait + ' 秒后再发（连发容易触发抖音风控）' }
+          const r = await sendComment(text)
+          if (r.ok) lastSayAt = Date.now()
+          return r
         },
       })
 
@@ -2167,7 +2211,7 @@ export default {
         : '你会在抖音挂直播间：主人说去看某人的直播、让你去直播间待着，你就调 kanzhibo_enter 真的进房（进不去就说原因）；' +
           '问你在看什么就用 kanzhibo_status；说别看了、关掉，就用 kanzhibo_stop。没说看谁的时候就进面板里设好的那个主播。' +
           '送礼：只有主人在这条私聊里明说送什么、而且面板里「QQ 私信送礼」开着的时候，你才调 kanzhibo_gift。他没提就别送；开关关着就老实说开关没开（面板 → 平台 → 抖音看直播），别用 kanzhibo_say 或别的工具凑一个。碰到充值、抖币不足就停，别硬送。灯牌不算礼物，不要用送礼工具送灯牌。' +
-          '主人让你替他在直播间说句话（「帮我发 XX」「在直播间说 XX」），就用 kanzhibo_say 把他给的原话原样发出去，一个字都别改。',
+          '主人让你替他在直播间说句话（「帮我发 XX」「在直播间说 XX」），就用 kanzhibo_say 把他给的原话原样发出去，一个字都别改。他也可以直接发命令「/看直播 说 XX」——那条命令会自己执行并回结果，你就不用再调工具，也别重复发一遍。',
     )
 
     /** 自检：把「现在到底能不能干活」一次说清楚（改完设置、排查问题时用）。 */
@@ -2298,8 +2342,8 @@ export default {
     api.command({
       name: '看直播',
       aliases: ['kanzhibo'],
-      desc: '挂直播间：/看直播 开、关、状态、进、收工、确认、取消、灯牌、自检',
-      run: async (arg) => {
+      desc: '挂直播间：/看直播 开、关、状态、进、收工、灯牌、说 <内容>（私聊发弹幕）、确认、取消、自检',
+      run: async (arg, msg) => {
         const cmd = String(arg || '').trim()
         if (!cmd || cmd === '状态') {
           return await statusLine()
@@ -2319,6 +2363,27 @@ export default {
           saveState({ badgeGiveUpDay: '' })
           const r = await doBadge()
           return r.pending ? r.message : (r.ok ? r.message : '没点成：' + r.message)
+        }
+        // —— 私信发弹幕（0.9.9）：/看直播 说 <内容>（评论 / 弹幕 / 发 是同义词） ——
+        //   空格可以省（/看直播 说主播加油），成对引号会剥掉一层。
+        {
+          const m = /^(说|评论|弹幕|发)([\s\S]*)$/.exec(cmd)
+          if (m) {
+            if (!fromOwnerDm(msg)) {
+              return '在直播间发弹幕只认主人本人的 QQ 私聊（这条是从' +
+                (String((msg && msg.chatId) || '').startsWith('group:') ? '群' : '别的聊天') +
+                '里来的），群里不发；到我私聊里发 /看直播 说 要说的话'
+            }
+            const content = stripQuotes(m[2])
+            if (!content) return '用法：/看直播 说 要发的话 —— 我就在正在看的直播间把这句原样发出去（只认你的私聊；最多 ' + SAY_MAX_CHARS + ' 个字）'
+            const chars = Array.from(content)
+            if (chars.length > SAY_MAX_CHARS) return '太长了：弹幕最多 ' + SAY_MAX_CHARS + ' 个字（这句 ' + chars.length + ' 个），缩短一点再发'
+            const wait = sayWaitSec()
+            if (wait) return '刚发过一条弹幕，' + wait + ' 秒后再发（连发容易触发抖音风控）'
+            const r = await sendComment(content)
+            if (r.ok) lastSayAt = Date.now()
+            return r.ok ? r.message : '没发出去：' + r.message
+          }
         }
         if (cmd === '开') {
           quietUntil = 0
@@ -2348,7 +2413,7 @@ export default {
           saveState({ quietUntil })
           return '浏览器关了；半小时内不会自己再进（要立刻回来说 /看直播 进）'
         }
-        return '能用的有：开 / 关 / 状态 / 进 / 收工 / 灯牌 / 确认 / 取消 / 自检'
+        return '能用的有：开 / 关 / 状态 / 进 / 收工 / 灯牌 / 说 <内容>（私聊发弹幕） / 确认 / 取消 / 自检'
       },
     })
 
@@ -2657,7 +2722,7 @@ export default {
       tick,
       selfCheck,
       status: () => ({ enabled: api.settings().enabled, target: api.settings().target, connected: Boolean(cdp) }),
-      _debug: { inWindow, dayKey, findBrowser },
+      _debug: { inWindow, dayKey, findBrowser, sayState: () => ({ lastSayAt, gapMs: SAY_GAP_MS, maxChars: SAY_MAX_CHARS }) },
     }
   },
 }

@@ -206,6 +206,41 @@ ok('/看直播 自检', /看直播自检/.test(await c.run('自检')))
 ok('/看直播 关 → 把刷抖音放回来', /关了/.test(await c.run('关')))
 ok('乱写的参数给菜单', /能用的有/.test(await c.run('滚')))
 
+console.log('\n=== 7.5 私信发弹幕：/看直播 说 <内容>（0.9.9）===')
+{
+  // 测试里的主人 QQ 是 10001 → 他的私聊 chatId 就是 private:10001
+  const dm = { chatId: 'private:10001' }
+  const group = { chatId: 'group:888' }
+  const otherDm = { chatId: 'private:99999' }
+
+  ok('主人私聊、没给内容 → 用法', /用法/.test(await c.run('说', dm)), (await c.run('说', dm)).slice(0, 40))
+  ok('主人私聊、给了内容但没在直播间 → 说清楚没发出去', /没发出去[\s\S]*不在直播间/.test(await c.run('说 主播加油', dm)))
+  ok('不带空格也行（/看直播 说主播加油）', /没发出去[\s\S]*不在直播间/.test(await c.run('说主播加油', dm)))
+  ok('同义词「评论」「弹幕」「发」都认', await (async () => {
+    for (const w of ['评论', '弹幕', '发']) {
+      const r = await c.run(w + ' 加油', dm)
+      if (!/没发出去[\s\S]*不在直播间/.test(r)) return false
+    }
+    return true
+  })())
+  ok('群里的这条命令 → 拒绝（哪怕框架保证命令来自主人）', /只认主人本人的 QQ 私聊/.test(await c.run('说 加油', group)))
+  ok('别人的私聊 → 拒绝', /只认主人本人的 QQ 私聊/.test(await c.run('说 加油', otherDm)))
+  ok('拿不到来源（msg 空）→ 也拒绝，不瞎放行', /只认主人本人的 QQ 私聊/.test(await c.run('说 加油')))
+  ok('太长（>50 字）→ 先拦下来', /太长了[\s\S]*50/.test(await c.run('说 ' + '加油呀'.repeat(20), dm)))
+  ok('菜单里能看到「说 <内容>」', /说 <内容>/.test(await c.run('滚')))
+  // 冷却只在真发出去才计时：失败的尝试不占冷却，连发两条都到「不在直播间」那步
+  const again = await c.run('说 再来一句', dm)
+  ok('失败不占冷却（没进直播间时连试两条都到同一句）', /没发出去[\s\S]*不在直播间/.test(again))
+  ok('sayState 暴露冷却参数（10 秒 / 50 字）', (() => { const st = b.out._debug.sayState(); return st.gapMs === 10000 && st.maxChars === 50 && st.lastSayAt === 0 })())
+
+  const src = readFileSync(new URL('../index.mjs', import.meta.url), 'utf8')
+  ok('命令解析用 (说|评论|弹幕|发) 前缀正则', /\(说\|评论\|弹幕\|发\)/.test(src))
+  ok('内容会剥一层成对引号', /stripQuotes/.test(src))
+  ok('kanzhibo_say 工具和命令共用连发冷却', /sayWaitSec/.test(src))
+  ok('真发出去了才计时（lastSayAt 只在 r.ok 时写）', /if \(r\.ok\) lastSayAt = Date\.now\(\)/.test(src))
+  ok('规则里告诉过模型：命令会自己执行，别重复发', /\/看直播 说 XX\/会自己执行|那条命令会自己执行/.test(src))
+}
+
 console.log('\n=== 8. 选点 / 唯一性 / 签名（纯函数） ===')
 ok('选点：9 点全过就用中心', (() => { const pts = Array.from({ length: 9 }, (_, i) => ({ x: 10 + i, y: 20, ok: true })); const p = choosePoint(pts); return Boolean(p) && p.x === 14 && p.y === 20 })())
 ok('选点：好点不足 5 个就放弃', choosePoint([{ x: 1, y: 1, ok: true }, { x: 2, y: 2, ok: false }]) === null)

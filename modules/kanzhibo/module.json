@@ -1,8 +1,8 @@
 {
   "id": "kanzhibo",
   "name": "抖音看直播",
-  "version": "0.9.8",
-  "description": "用独立浏览器（Edge/Chrome）经 CDP 挂在抖音直播间：进房、发一条定制评论、续粉丝团灯牌；点之前先验面板，点后按 +100 / 聊天播报 / 进度三级确认。",
+  "version": "0.9.9",
+  "description": "用独立浏览器（Edge/Chrome）经 CDP 挂在抖音直播间：进房、发一条定制评论、续粉丝团灯牌、主人在 QQ 私聊里命令发弹幕；点之前先验面板，点后按 +100 / 聊天播报 / 进度三级确认。",
   "category": "platform",
   "tags": [
     "抖音",
