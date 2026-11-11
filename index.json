@@ -1,7 +1,73 @@
 {
   "schema": 1,
-  "assetsBase": "https://github.com/aureth-labs/dsh-aurabot-qq-mods/releases/download/",
+  "assetsBase": "https://github.com/h752603-source/dsh-aurabot-qq-mods/releases/download/",
   "modules": [
+    {
+      "id": "aura-mimo",
+      "name": "aura-mimo",
+      "version": "1.1.2",
+      "description": "用一段参考音频零训练克隆音色，调小米 MiMo TTS 合成语音。可以单独用，也可以改名为 voice 接管内置语音。",
+      "category": "creative",
+      "tags": [
+        "语音",
+        "TTS",
+        "音色克隆",
+        "MiMo",
+        "接管语音"
+      ],
+      "author": "zcx1021",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [],
+      "capabilities": [
+        "network",
+        "filesystem",
+        "plugin-config",
+        "plugin-internals"
+      ],
+      "replacesBuiltin": false,
+      "tag": "aura-mimo-v1.1.2",
+      "file": "aura-mimo-v1.1.2.zip",
+      "path": "aura-mimo-v1.1.2/aura-mimo-v1.1.2.zip",
+      "size": 25844,
+      "sha256": "42d84f77d72c10f2685ab8ec3c9bf7214e2cea7abea4cf1a9f784b4092d7e1c6",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
+    },
+    {
+      "id": "autonomy",
+      "name": "自主生活",
+      "version": "0.6.1",
+      "description": "让她自己决定这一刻做什么、下次什么时候醒。运行时不预设任何权限：调模型、操作手机都要主人在面板里逐项授权后才生效。",
+      "category": "desktop",
+      "tags": [
+        "自主",
+        "生活",
+        "手机"
+      ],
+      "author": "asyncxt",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [],
+      "capabilities": [
+        "filesystem",
+        "process",
+        "network",
+        "plugin-config",
+        "plugin-internals"
+      ],
+      "replacesBuiltin": false,
+      "homepage": "https://github.com/asyncxt/aurabot-mod-autonomy",
+      "tag": "autonomy-v0.6.1",
+      "file": "autonomy-v0.6.1.zip",
+      "path": "autonomy-v0.6.1/autonomy-v0.6.1.zip",
+      "size": 44324,
+      "sha256": "27c05ceaec78a0c27637e17e42c7b6323067c080a4fe591e518e9c78cccaf407",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
+    },
     {
       "id": "beg-for-money",
       "name": "讨饭",
@@ -34,9 +100,41 @@
       "publishedAt": "2026-11-08T18:06:00.062Z"
     },
     {
+      "id": "breeze",
+      "name": "Breeze 语音",
+      "version": "1.3.3",
+      "description": "用 Breeze Blue 的在线语音合成替换系统语音，附带每日自动签到领免费积分；设置放在面板「语音」页最下面",
+      "category": "tool",
+      "tags": [
+        "语音",
+        "TTS",
+        "签到"
+      ],
+      "author": "漪漪凛",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [],
+      "capabilities": [
+        "network",
+        "filesystem",
+        "process",
+        "plugin-config",
+        "plugin-internals"
+      ],
+      "replacesBuiltin": false,
+      "tag": "breeze-v1.3.3",
+      "file": "breeze-v1.3.3.zip",
+      "path": "breeze-v1.3.3/breeze-v1.3.3.zip",
+      "size": 21895,
+      "sha256": "254c1bef636d8feeba023fe0bddc96c7303da2e50ec257325bc948d10a22b7b9",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
+    },
+    {
       "id": "browser-ops",
       "name": "逛网页（浏览器自动化）",
-      "version": "1.2.0",
+      "version": "1.2.4",
       "description": "封装 CDP 专用浏览器（独立登录资料）：提供打开网页、点击、输入、滚动、截屏、页面快照等原子操作，供其他模块经 api.use('browser-ops') 复用。",
       "category": "platform",
       "tags": [
@@ -57,18 +155,49 @@
         "plugin-internals"
       ],
       "replacesBuiltin": false,
-      "tag": "browser-ops-v1.2.0",
-      "file": "browser-ops-v1.2.0.zip",
-      "path": "browser-ops-v1.2.0/browser-ops-v1.2.0.zip",
-      "size": 40713,
-      "sha256": "5fad466335d3427467f69745bef5ea52caaa917afa53e16636d1a23de16b2214",
-      "commit": "0fa2750ddade64ad32b5a43696a0f8950afb865d",
-      "publishedAt": "2026-11-08T15:21:08.901Z"
+      "tag": "browser-ops-v1.2.4",
+      "file": "browser-ops-v1.2.4.zip",
+      "path": "browser-ops-v1.2.4/browser-ops-v1.2.4.zip",
+      "size": 42444,
+      "sha256": "888e216d9c95ab7b80b8406d57412ba9fae6b7d567c9eaf084a3d0a8ef9d8dfd",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
+    },
+    {
+      "id": "daily-art",
+      "name": "每日推图 · 逛图站",
+      "version": "3.2.0",
+      "description": "在同一页管理 Konachan 和 Yande.re 定时推图及 QQ 按需找图。",
+      "category": "platform",
+      "tags": [
+        "图片",
+        "定时",
+        "Konachan"
+      ],
+      "author": "Reinero",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [],
+      "capabilities": [
+        "network",
+        "filesystem",
+        "plugin-config",
+        "plugin-internals"
+      ],
+      "replacesBuiltin": false,
+      "tag": "daily-art-v3.2.0",
+      "file": "daily-art-v3.2.0.zip",
+      "path": "daily-art-v3.2.0/daily-art-v3.2.0.zip",
+      "size": 36537,
+      "sha256": "3466cace471bbd701b3473c8dd6f60c6d740099cff2b0bcd28c01166f9a7d9ca",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
     },
     {
       "id": "douyin",
       "name": "刷抖音",
-      "version": "2.3.0",
+      "version": "2.3.4",
       "description": "用专用浏览器刷抖音：看推荐、点赞评论，把好玩的视频分享给主人，也能看别人发来的抖音链接。",
       "category": "platform",
       "tags": [
@@ -89,13 +218,13 @@
       ],
       "replacesBuiltin": false,
       "homepage": "https://github.com/accomplish07zrh-eng/dsh-aurabot-qq",
-      "tag": "douyin-v2.3.0",
-      "file": "douyin-v2.3.0.zip",
-      "path": "douyin-v2.3.0/douyin-v2.3.0.zip",
-      "size": 47455,
-      "sha256": "51866baaa27bf413f044c7ddc0ce5c17feaf60cd38fca0632cd192d6d2017248",
-      "commit": "0fa2750ddade64ad32b5a43696a0f8950afb865d",
-      "publishedAt": "2026-11-08T15:21:08.901Z"
+      "tag": "douyin-v2.3.4",
+      "file": "douyin-v2.3.4.zip",
+      "path": "douyin-v2.3.4/douyin-v2.3.4.zip",
+      "size": 49284,
+      "sha256": "15fba71e9e8fbeac0206467ef50ac38fd8d0d770536f865365e0868fcadd9454",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
     },
     {
       "id": "dsh-persona",
@@ -225,7 +354,7 @@
     {
       "id": "heybox",
       "name": "刷小黑盒",
-      "version": "1.5.1",
+      "version": "1.5.6",
       "description": "用主人的账号逛小黑盒：看帖子和热评，点赞、评论、发帖。支持谷时逛、扫码登录和浏览器验证。",
       "category": "platform",
       "tags": [
@@ -246,13 +375,13 @@
       ],
       "replacesBuiltin": false,
       "homepage": "https://github.com/accomplish07zrh-eng/dsh-aurabot-qq",
-      "tag": "heybox-v1.5.1",
-      "file": "heybox-v1.5.1.zip",
-      "path": "heybox-v1.5.1/heybox-v1.5.1.zip",
-      "size": 77363,
-      "sha256": "7af79a85032c0de2077063d9d8f52bcb2ce2a065fb97ed68a3a7f3457ce67fa6",
-      "commit": "8c2e49dc9a5ef2e27569f804a06645b00ab64830",
-      "publishedAt": "2026-11-08T16:24:59.880Z"
+      "tag": "heybox-v1.5.6",
+      "file": "heybox-v1.5.6.zip",
+      "path": "heybox-v1.5.6/heybox-v1.5.6.zip",
+      "size": 82335,
+      "sha256": "05f0cea889c85e90cfdb4fa453a439dbceea7d5f52d19b5f4060da9bfd1e6804",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
     },
     {
       "id": "history-vault",
@@ -281,6 +410,104 @@
       "sha256": "c31d794932a8d5f1f0cd3fe9fec88ec4705c4f0787e2012e707da3ea57b90bf5",
       "commit": "9ff2ccbc8c19884891c350d844ccdb870ac4dfa6",
       "publishedAt": "2026-11-06T17:20:05.895Z"
+    },
+    {
+      "id": "impression-card",
+      "name": "印象卡片",
+      "version": "1.0.6",
+      "description": "欢乐向的好感度 / 印象卡：多维度打分、雷达卡片、加减分系统通知、主动微调",
+      "category": "social",
+      "tags": [
+        "印象",
+        "好感度",
+        "卡片"
+      ],
+      "author": "cdcp998",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [],
+      "capabilities": [
+        "network",
+        "filesystem",
+        "plugin-config",
+        "plugin-internals"
+      ],
+      "replacesBuiltin": false,
+      "homepage": "https://github.com/cdcp998/impression-card",
+      "tag": "impression-card-v1.0.6",
+      "file": "impression-card-v1.0.6.zip",
+      "path": "impression-card-v1.0.6/impression-card-v1.0.6.zip",
+      "size": 430566,
+      "sha256": "72ca60ed92737693829ad40dd006ba0e92ccbf30f3684e246a2846d7d7e2388f",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
+    },
+    {
+      "id": "kanzhibo",
+      "name": "抖音看直播",
+      "version": "1.0.3",
+      "description": "用独立浏览器（Edge/Chrome）经 CDP 挂在抖音直播间：进房、发一条定制评论、续粉丝团灯牌、主人在 QQ 私聊里命令发弹幕、开播主动提醒；点之前先验面板，点后按 +100 / 聊天播报 / 进度三级确认。",
+      "category": "platform",
+      "tags": [
+        "抖音",
+        "直播",
+        "挂机",
+        "灯牌",
+        "CDP"
+      ],
+      "author": "h752603-source",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [],
+      "capabilities": [
+        "network",
+        "filesystem",
+        "process",
+        "plugin-config",
+        "plugin-internals"
+      ],
+      "replacesBuiltin": false,
+      "tag": "kanzhibo-v1.0.3",
+      "file": "kanzhibo-v1.0.3.zip",
+      "path": "kanzhibo-v1.0.3/kanzhibo-v1.0.3.zip",
+      "size": 110354,
+      "sha256": "ab5c96085aa43255fab90aa7c34549c5ee32a8b992ae373afc6c060018255ac3",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
+    },
+    {
+      "id": "love-mode",
+      "name": "快来跟我恋爱吧",
+      "version": "1.5.0",
+      "description": "教她怎么爱你：六种关系模式，AI 自动生成你们的画像，一键自动匹配。",
+      "category": "social",
+      "tags": [
+        "恋爱",
+        "人格",
+        "陪伴",
+        "模式"
+      ],
+      "author": "liaojiabo",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [],
+      "capabilities": [
+        "plugin-config",
+        "filesystem",
+        "plugin-internals"
+      ],
+      "replacesBuiltin": false,
+      "homepage": "https://github.com/accomplish07zrh-eng/dsh-aurabot-qq-mods",
+      "tag": "love-mode-v1.5.0",
+      "file": "love-mode-v1.5.0.zip",
+      "path": "love-mode-v1.5.0/love-mode-v1.5.0.zip",
+      "size": 76919,
+      "sha256": "bb7521e28e9607e0d9a454bd1e06d5de04d6ee91efa5e0175f8d4ec273c707b2",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
     },
     {
       "id": "meme-wiki",
@@ -373,9 +600,74 @@
       "publishedAt": "2026-11-07T14:19:58.408Z"
     },
     {
+      "id": "news",
+      "name": "每日新闻一图流",
+      "version": "1.0.0",
+      "description": "每天从公开 RSS 源挑国内近期新闻，调用生图绘制中文一图流，附带来源链接发到指定聊天。",
+      "category": "creative",
+      "tags": [
+        "新闻",
+        "一图流",
+        "生图",
+        "每日简报"
+      ],
+      "author": "HTwoOhwater",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [
+        "imagegen"
+      ],
+      "capabilities": [
+        "network",
+        "filesystem",
+        "plugin-config"
+      ],
+      "replacesBuiltin": false,
+      "tag": "news-v1.0.0",
+      "file": "news-v1.0.0.zip",
+      "path": "news-v1.0.0/news-v1.0.0.zip",
+      "size": 15105,
+      "sha256": "d7b223660c8e5d8c058ead08baea58045708d8804ad6f1f77c4773a4696efbb7",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
+    },
+    {
+      "id": "night",
+      "name": "长夜如梦",
+      "version": "1.0.0",
+      "description": "作息、睡眠阶段、REM 做梦、概率唤醒：她会困、会睡、会做梦，睡着时叫不一定醒。",
+      "category": "social",
+      "tags": [
+        "作息",
+        "睡眠",
+        "做梦",
+        "长夜",
+        "精力"
+      ],
+      "author": "zcx1021",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [],
+      "capabilities": [
+        "filesystem",
+        "plugin-config",
+        "plugin-internals"
+      ],
+      "replacesBuiltin": false,
+      "tag": "night-v1.0.0",
+      "file": "night-v1.0.0.zip",
+      "path": "night-v1.0.0/night-v1.0.0.zip",
+      "size": 40145,
+      "sha256": "a6823eb9f7d6c787d09566a27187e51c2ec7e400520fc12f3b430c3497e0b021",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
+    },
+    {
       "id": "pet",
       "name": "桌宠",
-      "version": "1.0.15",
+      "version": "1.0.18",
       "description": "把大肥鱼请到桌面上：会冒气泡、做小动作，你在干活时也陪着你。",
       "category": "desktop",
       "tags": [
@@ -396,18 +688,18 @@
       ],
       "replacesBuiltin": false,
       "homepage": "https://github.com/accomplish07zrh-eng/dsh-aurabot-qq",
-      "tag": "pet-v1.0.15",
-      "file": "pet-v1.0.15.zip",
-      "path": "pet-v1.0.15/pet-v1.0.15.zip",
-      "size": 223147,
-      "sha256": "fe215701e4b5b9ac541093700aed8982ea902af0c5c20ee191889c407ff4f521",
-      "commit": "e247c56dae7922c26a528bb8f143bde80c9bad0b",
-      "publishedAt": "2026-11-08T13:19:42.869Z"
+      "tag": "pet-v1.0.18",
+      "file": "pet-v1.0.18.zip",
+      "path": "pet-v1.0.18/pet-v1.0.18.zip",
+      "size": 224858,
+      "sha256": "1cf1eddb57a8ffe5a62837ca46e775df5111325b0195c456953c026b7451b3ba",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
     },
     {
       "id": "phone",
       "name": "手机逛逛",
-      "version": "0.3.1",
+      "version": "0.4.0",
       "description": "通过 ADB 操控 Android 手机：按主人教好的流程自动签到/浏览/点赞，或自由推理完成一句话任务",
       "category": "platform",
       "tags": [
@@ -428,13 +720,13 @@
         "plugin-internals"
       ],
       "replacesBuiltin": false,
-      "tag": "phone-v0.3.1",
-      "file": "phone-v0.3.1.zip",
-      "path": "phone-v0.3.1/phone-v0.3.1.zip",
-      "size": 78718,
-      "sha256": "9ec530ad6b1dd25f713c817aff0a2e65c20811afdfbb8387b6aef47ce19c019a",
-      "commit": "3827609ce75cd6cb67d60ebd01b7a62f0d9cf448",
-      "publishedAt": "2026-11-06T06:03:15.318Z"
+      "tag": "phone-v0.4.0",
+      "file": "phone-v0.4.0.zip",
+      "path": "phone-v0.4.0/phone-v0.4.0.zip",
+      "size": 118709,
+      "sha256": "e87bd979be47d0a3d70237fe9f8f34ea7f784004ff1fce4b8b8af4a945174723",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
     },
     {
       "id": "price-watch",
@@ -469,6 +761,38 @@
       "publishedAt": "2026-11-08T18:06:23.101Z"
     },
     {
+      "id": "qwen-tts",
+      "name": "千问百炼语音",
+      "version": "1.0.0",
+      "description": "通过阿里云百炼合成语音，提供音色、语气及试听设置",
+      "category": "creative",
+      "tags": [
+        "语音",
+        "千问",
+        "百炼"
+      ],
+      "author": "mrnobodynan",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [],
+      "capabilities": [
+        "network",
+        "filesystem",
+        "process",
+        "plugin-config",
+        "plugin-internals"
+      ],
+      "replacesBuiltin": false,
+      "tag": "qwen-tts-v1.0.0",
+      "file": "qwen-tts-v1.0.0.zip",
+      "path": "qwen-tts-v1.0.0/qwen-tts-v1.0.0.zip",
+      "size": 19664,
+      "sha256": "15720e142e516db614d05e844cb7476b1d3272c04a82458cacb7933528640c90",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
+    },
+    {
       "id": "roast-mode",
       "name": "毒舌模式",
       "version": "1.0.4",
@@ -501,7 +825,7 @@
     {
       "id": "room3d",
       "name": "房间",
-      "version": "1.0.0",
+      "version": "1.0.3",
       "description": "给她一个自己的 3D 房间：屋里一开始是空的，只有她一个人（大肥鱼）；家具、地板、猫都能自己摆，她还看得见自己在哪儿。",
       "category": "social",
       "tags": [
@@ -522,13 +846,13 @@
         "plugin-internals"
       ],
       "replacesBuiltin": false,
-      "tag": "room3d-v1.0.0",
-      "file": "room3d-v1.0.0.zip",
-      "path": "room3d-v1.0.0/room3d-v1.0.0.zip",
-      "size": 331004,
-      "sha256": "471797af687426269d135c4806013340ef0eb7d3237fe705d9523a098cf6e293",
-      "commit": "9de1b1421269ed83053db9e261bbe354d485c14c",
-      "publishedAt": "2026-11-08T14:48:33.191Z"
+      "tag": "room3d-v1.0.3",
+      "file": "room3d-v1.0.3.zip",
+      "path": "room3d-v1.0.3/room3d-v1.0.3.zip",
+      "size": 331095,
+      "sha256": "7af591b654b196d7c1e82fdabe8a1cb191e37422f816f73314d7c79e4128484f",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
     },
     {
       "id": "rss-reader",
@@ -559,6 +883,72 @@
       "sha256": "ccd91233501937f327f01be6b3b72c7b94647dd48dfa042e63530d60f9980312",
       "commit": "59be385f35fb36c6d1de3406504470b84978ef34",
       "publishedAt": "2026-11-05T12:14:07.525Z"
+    },
+    {
+      "id": "stardew",
+      "name": "星露谷",
+      "version": "1.1.0",
+      "description": "让鱼自己在后台玩《星露谷物语》：读游戏文字状态、自己决定做什么，再让 SMAPI 模组去执行。需要先装游戏侧模组 Blind Whale Farmer（原文见 README，游戏模组不随本模块分发，请去原帖下载）。",
+      "category": "tool",
+      "tags": [
+        "星露谷",
+        "游戏",
+        "自己玩"
+      ],
+      "author": "neige",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.3.0",
+      "requires": [],
+      "capabilities": [
+        "network",
+        "filesystem",
+        "process",
+        "dynamic-code",
+        "plugin-config",
+        "plugin-internals"
+      ],
+      "replacesBuiltin": false,
+      "tag": "stardew-v1.1.0",
+      "file": "stardew-v1.1.0.zip",
+      "path": "stardew-v1.1.0/stardew-v1.1.0.zip",
+      "size": 23363,
+      "sha256": "df2a52bd323d3c4ee9b13a683d33f64c659ad131275afd5b06b88e5da93d3940",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
+    },
+    {
+      "id": "starmap",
+      "name": "星图",
+      "version": "1.1.0",
+      "description": "把 Aurabot 自己的记忆渲染成可交互的星图，两种看法：关系星图看结构，银河云图看时间。",
+      "category": "tool",
+      "tags": [
+        "星图",
+        "记忆",
+        "识海",
+        "银河",
+        "可视化"
+      ],
+      "author": "zcx1021",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [],
+      "capabilities": [
+        "filesystem",
+        "plugin-internals",
+        "plugin-config",
+        "network"
+      ],
+      "replacesBuiltin": false,
+      "tag": "starmap-v1.1.0",
+      "file": "starmap-v1.1.0.zip",
+      "path": "starmap-v1.1.0/starmap-v1.1.0.zip",
+      "size": 35001,
+      "sha256": "b32990720df229e23114fe264d385e3faaa00ce53d332d993a08639c364b3694",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
     },
     {
       "id": "tieba-reader",
@@ -593,6 +983,38 @@
       "publishedAt": "2026-11-06T12:25:21.237Z"
     },
     {
+      "id": "token-budget",
+      "name": "预算管家",
+      "version": "1.2.0",
+      "description": "省 token：注入内容预算封顶、本地向量只带最相关的 16 条记忆、估算记账、日超预算自动熔断",
+      "category": "manage",
+      "tags": [
+        "省token",
+        "预算",
+        "熔断",
+        "记忆"
+      ],
+      "author": "RookieApe-tao",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [],
+      "capabilities": [
+        "filesystem",
+        "plugin-config",
+        "plugin-internals",
+        "network"
+      ],
+      "replacesBuiltin": false,
+      "tag": "token-budget-v1.2.0",
+      "file": "token-budget-v1.2.0.zip",
+      "path": "token-budget-v1.2.0/token-budget-v1.2.0.zip",
+      "size": 16606,
+      "sha256": "ae6d3ed943b81acf23bd185348ea88c08cc4fa15655279ec5c513c6ceaee2a15",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
+    },
+    {
       "id": "tophub",
       "name": "刷热榜",
       "version": "0.3.1",
@@ -621,6 +1043,39 @@
       "sha256": "7fe4ccb2a46b6f98ee1e1d9183559c0424d0b4e91ebfedfff3d2e3a4a735e3a2",
       "commit": "3827609ce75cd6cb67d60ebd01b7a62f0d9cf448",
       "publishedAt": "2026-11-06T06:03:15.318Z"
+    },
+    {
+      "id": "voice",
+      "name": "豆包语音 2.0",
+      "version": "1.0.0",
+      "description": "用豆包语音 2.0 复刻音色把她的回复念成语音条，替换内置语音",
+      "category": "creative",
+      "tags": [
+        "语音",
+        "TTS",
+        "豆包",
+        "音色复刻",
+        "接管语音"
+      ],
+      "author": "wuxingx",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [],
+      "capabilities": [
+        "network",
+        "filesystem",
+        "plugin-config",
+        "plugin-internals"
+      ],
+      "replacesBuiltin": true,
+      "tag": "voice-v1.0.0",
+      "file": "voice-v1.0.0.zip",
+      "path": "voice-v1.0.0/voice-v1.0.0.zip",
+      "size": 8288,
+      "sha256": "0cd0a7c833dd8b14b2b7b1d57fe5f8a9953e48646da05e12fb45a813999719c6",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
     },
     {
       "id": "windows-ops",
@@ -656,7 +1111,7 @@
     {
       "id": "xhs",
       "name": "刷小红书",
-      "version": "0.3.0",
+      "version": "0.3.4",
       "description": "用专用浏览器刷小红书：逛推荐/搜索、看笔记写记忆、点赞收藏评论（人格生成、每日上限）、认别人发来的小红书链接、看主人的私信并回复；发帖走「草稿 → 主人确认」两步，绝不闷头发。各能力独立开关，默认全关。",
       "category": "platform",
       "tags": [
@@ -677,15 +1132,15 @@
         "plugin-internals"
       ],
       "replacesBuiltin": false,
-      "tag": "xhs-v0.3.0",
-      "file": "xhs-v0.3.0.zip",
-      "path": "xhs-v0.3.0/xhs-v0.3.0.zip",
-      "size": 95344,
-      "sha256": "8cc4770e4b6a3b4e60caca3ee28883512778dc6af9df72ccf48ca47f9aef62e8",
-      "commit": "0fa2750ddade64ad32b5a43696a0f8950afb865d",
-      "publishedAt": "2026-11-08T15:21:08.901Z"
+      "tag": "xhs-v0.3.4",
+      "file": "xhs-v0.3.4.zip",
+      "path": "xhs-v0.3.4/xhs-v0.3.4.zip",
+      "size": 97148,
+      "sha256": "94da73849bf7956c4378dd98c098a2514c7c72a9492924832aac729b54418a9d",
+      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
+      "publishedAt": "2026-11-11T07:51:51.201Z"
     }
   ],
   "revoked": [],
-  "generatedAt": "2026-11-08T19:15:21.180Z"
+  "generatedAt": "2026-11-11T07:51:51.201Z"
 }
