@@ -1,6 +1,6 @@
 {
   "name": "aurabot-kanzhibo",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "description": "Aurabot 的抖音看直播扩展：独立浏览器经 CDP 挂在直播间，进房、定制评论、续粉丝团灯牌、私信命令发弹幕",

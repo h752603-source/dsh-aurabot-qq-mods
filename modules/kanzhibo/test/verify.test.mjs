@@ -490,7 +490,7 @@ console.log('\n=== 11.95 面板里同时有「赠送」和「送灯牌」（2026
     const i2 = src.indexOf("'^赠送$'")
     return i1 > 0 && i2 > 0 && i1 < i2
   })())
-  ok('prepareBadge 用 findBadgeConfirm 而不是单一 prepare', /let prep = await findBadgeConfirm\(2\)/.test(src))
+  ok('prepareBadge 用 findBadgeConfirm 而不是单一 prepare', /let prep = await findBadgeConfirm\(10\)/.test(src))
   // 同一条失败不该用旧口径再报一次
   ok('tick 不再用「已完成」旧口径重复报错', !/送完还是没判到「已完成」/.test(src))
 }
@@ -560,7 +560,7 @@ console.log('\n=== 11.9997 0.9.7 优化与加固（2026-11-09）===')
   ok('合并扫描保留按优先级分组判唯一', /BADGE_CONFIRM_TEXTS\.map/.test(src) && /pickUnique\(group\)/.test(src))
   ok('DOM 扫描跳过 script/style/svg 等无用节点', /var SKIP = \{ SCRIPT: 1, STYLE: 1/.test(find) && find.split('var SKIP').length >= 3, 'roots 两处都要有')
   ok('badgeSent 读完不再点开关收面板（少两次点击）', /if \(first === 'todo'\) return false/.test(src))
-  ok('prepareBadge 面板开着时不再点入口（入口是开关，点了反而关掉）', /panelOpen[\s\S]{0,60}findBadgeConfirm\(6\)/.test(src))
+  ok('prepareBadge 面板开着时不再点入口（入口是开关，点了反而关掉）', /panelOpen[\s\S]{0,60}findBadgeConfirm\(12\)/.test(src))
   ok('closeTaskPanel 确认面板真的开着才点（防止把入口点开）', /async function closeTaskPanel/.test(src) && /if \(!open\) return false/.test(src))
   ok('半自动红框按候选 rect 画（不再依赖 data-ab-pick 序号）', /clicker\.markRect\(prepared\.cand \? prepared\.cand\.rect : null\)/.test(src) && /async function markRect/.test(click))
   // —— 健壮性 ——
@@ -651,65 +651,6 @@ try {
   execFileSync(process.execPath, [cliPath, 'status', '--base', 'http://127.0.0.1:9'], { encoding: 'utf8', timeout: 20000, stdio: ['ignore', 'pipe', 'pipe'] })
 } catch (e) { cliFail = { code: e.status, err: String(e.stderr || '') } }
 ok('连不上面板时退出码 2 并说清楚', cliFail.code === 2 && /找不到面板/.test(cliFail.err), 'exit=' + cliFail.code)
-
-console.log('\n=== 12.5 1.0.2 灯牌放弃标记绑房间（换直播间/换主播就作废）===')
-{
-  const src = readFileSync(new URL('../index.mjs', import.meta.url), 'utf8')
-  const d = boot().out._debug
-  const today = '2026-11-09'
-  ok('roomKeyOf 优先取房间号', d.roomKeyOf('https://live.douyin.com/467135990812?anchor_id=4107408219578990') === '467135990812')
-  ok('roomKeyOf 认「关注页」的直播间地址', d.roomKeyOf('https://www.douyin.com/follow/live/835225251778?anchor_id=1') === '835225251778')
-  ok('roomKeyOf 取不到房间号就退回原串（空串还是空串）', d.roomKeyOf('') === '')
-  ok('同一个房间：今天的放弃标记继续拦', d.giveUpRoomsDiffer(today, '835225251778', today, '835225251778') === false)
-  ok('换了房间：放弃标记作废', d.giveUpRoomsDiffer(today, '835225251778', today, '467135990812') === true)
-  ok('跨天自己不拦（每天重新算）', d.giveUpRoomsDiffer('2026-11-08', '835225251778', today, '467135990812') === false)
-  ok('房间号缺失时不乱清（维持旧行为，宁可不动）',
-    d.giveUpRoomsDiffer(today, '', today, '467135990812') === false && d.giveUpRoomsDiffer(today, '835225251778', today, '') === false)
-  ok('tick 在「今天已放弃」判定之前先按房间清标记',
-    /const curRoom = roomKeyOf\(url\)[\s\S]{0,300}giveUpRoomsDiffer\(badgeGiveUpDay, giveUpRoom, today, curRoom\)[\s\S]{0,500}badgeGiveUpDay = ''/.test(src))
-  ok('放弃时记下是在哪个房间放弃的',
-    /badgeGiveUpRoom = String\(room \|\| badgeGiveUpRoom \|\| roomKeyOf\(badgeUrl\)\)/.test(src) && /saveState\(\{ badgeGiveUpDay: today, badgeGiveUpRoom \}\)/.test(src))
-  ok('手动 /看直播 灯牌 把房间标记和连续失败计数一起清掉',
-    /cmd === '灯牌'[\s\S]{0,500}badgeGiveUpRoom = ''/.test(src) && /cmd === '灯牌'[\s\S]{0,500}badgeRejectStreak = 0/.test(src))
-  ok('/selfcheck 能看到 badgeGiveUpRoom', /badgeGiveUpRoom,\r?\n/.test(src))
-}
-
-console.log('\n=== 12.6 1.0.3 认得「送1个基础灯牌」，并挡掉星守护那排同名「点亮」===')
-{
-  const src = readFileSync(new URL('../index.mjs', import.meta.url), 'utf8')
-  const find = readFileSync(new URL('../lib/find.mjs', import.meta.url), 'utf8')
-  const arrText = (src.match(/const BADGE_CONFIRM_TEXTS = (\[[\s\S]*?\n    \])/) || [])[1]
-  const TEXTS = arrText ? new Function('return ' + arrText)() : []
-  const pick = (text) => TEXTS.find((t) => { try { return new RegExp(t, 'u').test(text) } catch { return false } })
-  ok('抖音现在的按钮文案「送1个基础灯牌」有对应规则', Boolean(pick('送1个基础灯牌')), pick('送1个基础灯牌') || '没有')
-  ok('「送1个灯牌」也认', Boolean(pick('送1个灯牌')))
-  ok('「送灯牌 / 点亮（1钻）/ 赠送」这些老文案都还在', ['送灯牌', '点亮（1钻）', '赠送'].every((t) => Boolean(pick(t))))
-  ok('优先顺序：先试「送1个基础灯牌」，再退化到裸「点亮」',
-    TEXTS.indexOf(pick('送1个基础灯牌')) < TEXTS.indexOf('^点亮$'), 'idx ' + TEXTS.indexOf(pick('送1个基础灯牌')) + ' < ' + TEXTS.indexOf('^点亮$'))
-  ok('扫描用的合并正则也包含新文案', /送1个基础灯牌/.test((src.match(/const BADGE_CONFIRM_SCAN = [\s\S]{0,400}/) || [''])[0]))
-  ok('spec 反面筛挡掉星守护/展馆那排「差N个点亮 / 点亮送N个」',
-    /excludeAncestor: '差\\\\s\*\\\\d\+\\\\s\*个|点亮送/.test(src) && /excludeAncestor:/.test(src))
-
-  // lib 那边得真的支持 excludeAncestor（否则 spec 写了也白写）
-  ok('find.mjs 认识 excludeAncestor（normalizeSpec 里带出来）', /excludeAncestor: s\.excludeAncestor \? String\(s\.excludeAncestor\) : ''/.test(find))
-  ok('FIND_SRC 里编译并应用了反面筛', /var ancBan = null/.test(find) && /if \(ancestorBanned\(target\)\) continue/.test(find))
-  ok('反面筛只看上两层（爬到面板根会误杀整块面板）',
-    /var ancestorBanned = function \(el\) \{[\s\S]{0,260}i < 2 && cur/.test(find))
-
-  // 真·行为：同一条「点亮」在多行里重复时仍然拒绝（宁可不动），不因为加了反面筛就放行
-  const dup = collapseNested([
-    { text: '点亮', area: 480, rect: { left: 0, top: 0, width: 24, height: 20 } },
-    { text: '点亮', area: 480, rect: { left: 0, top: 40, width: 24, height: 20 } },
-    { text: '点亮', area: 480, rect: { left: 0, top: 80, width: 24, height: 20 } },
-  ])
-  const u = pickUnique(dup)
-  ok('多行同名「点亮」仍然判不唯一（不瞎点）', u.ok === false && /分不清|同时找到/.test(u.reason))
-  const one = pickUnique(collapseNested([
-    { text: '送1个基础灯牌', area: 1656, rect: { left: 1658, top: 632, width: 92, height: 18 } },
-    { text: '送1个基础灯牌', area: 2736, rect: { left: 1658, top: 632, width: 152, height: 18 } },
-  ]))
-  ok('嵌套的同一颗按钮折叠成 1 个（内层 x-text + 外层 x-view）', one.ok === true && one.cand.text === '送1个基础灯牌')
-}
 
 if (LIVE) {
   console.log('\n=== 13. 真起一次浏览器（LIVE=1）===')

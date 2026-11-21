@@ -271,7 +271,23 @@ return function KanzhiboPanel({ settings, draftSettings, setSettings, toast }) {
     h(SayCard, { sc, busy, call, toast, load })
     ,
 
-    // ⑥ 风险：用一条警示通栏，不再单独占一大卡
+    // ⑥ 工作区记录（2026-11-21）：每步操作记到 DSH 侧栏的「看直播 · 工作间」会话
+    h(ui.Card, {
+      title: '工作区记录',
+      desc: '把每步操作同时记进 Aurabot 工作区里的「QQ · 看直播 · 工作间」会话（DSH 侧栏能点开看）。关掉就只写本地日志。',
+      right: sw('opsSession'),
+    },
+      h(ui.Row, { label: '记录到哪', hint: '挂在「Aurabot · QQ」工作区，和你的 QQ 会话挨着' },
+        v('opsSession') ? ok('看直播 · 工作间') : dim('没开')),
+      h(ui.Row, { label: '最近的步骤', hint: '完整记录在那个工作区会话里' },
+        (sc && sc.ops && sc.ops.items && sc.ops.items.length)
+          ? h('div', { style: { flex: '1 1 320px', minWidth: 0 } },
+              sc.ops.items.map((e, i) => h('div', { key: i, className: 'ab-small ab-muted' },
+                (String(e.at || '').slice(11, 19) || '') + ' ' + (e.ok === false ? '✗ ' : '· ') + String(e.step || '') + (e.detail ? '：' + e.detail : ''))))
+          : dim('还没有记录'))
+    ),
+
+    // ⑦ 风险：用一条警示通栏，不再单独占一大卡
     h('div', { className: 'ab-note warn' },
       h('b', null, '这两件事没有撤销：'),
       '续灯牌可能点偏（页面没加载完 / 抖音改版 / 窗口被拉小时），所以先过「候选唯一 + 区域带 + 9 点命中」，点完只认 +100；' +

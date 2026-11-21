@@ -7,7 +7,7 @@
 //   3. 按设置续粉丝团灯牌 / 送礼（半自动先截图发主人私聊，等一句「确认」才点）。
 
 import { spawn, execFileSync } from 'node:child_process'
-import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync, unlinkSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync, unlinkSync, appendFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { createClicker } from './lib/click.mjs'
 import { createGate } from './lib/gate.mjs'
@@ -25,7 +25,10 @@ import { PAGE_TEXT_SRC, taskProgressFromText, badgeHintsFromText, plus100FromTex
 // 1.0.3 → 2026-11-09：抖音把按钮改叫「送1个基础灯牌」，旧文字表一个都不匹配，于是退到裸「点亮」，
 //   而星守护/展馆那排「差N个点亮」贡献了 7 个同名按钮 → 候选不唯一直接拒绝。
 //   补上真实文案，并用 excludeAncestor 把那排集星按钮按祖先文字挡掉。
-const VERSION = '1.0.3'
+// 1.1.0 → 2026-11-21：新增「工作区操作记录」——每步操作写进 modules-data/kanzhibo/worklog/YYYY-MM-DD.jsonl，
+//   同时接一条「看直播 · 工作间」后台会话到 Aurabot 工作区（hub.runSystemTurn，DSH 侧栏能点开看），
+//   每 15 秒把这几步汇总记进去，写失败不影响挂直播主流程。新增 /看直播 记录、/ops 接口、面板卡片。
+const VERSION = '1.1.0'
 
 // 点完之后等证据的时间（ms）。放在这里，失败文案里的秒数也从它算，避免又写死一个 12。
 const EVIDENCE_WAIT_MS = 20_000
@@ -151,7 +154,7 @@ export default {
   api: 1,
   // 面板「已安装」页那一行只显示 名字 / id / 状态 / description，不读 version 字段（客户端 ModuleRow 里没有这一项），
   // 所以版本号写在 description 开头，那一行才看得见；名字里不能加（名字决定导航分组，还要留给「平台」组认「抖音」）。
-  description: 'v' + VERSION + ' · 挂抖音直播间 + 进房评论 + 续粉丝团灯牌 + 私信发弹幕（/看直播 说）；送礼另有一道锁（只认主人私聊）',
+  description: 'v' + VERSION + ' · 挂抖音直播间 + 进房评论 + 续粉丝团灯牌 + 私信发弹幕（/看直播 说）+ 每步操作记进工作区会话；送礼另有一道锁（只认主人私聊）',
 
   defaults: {
     enabled: false,
@@ -173,6 +176,8 @@ export default {
     confirmSec: 90,
     browserPath: '',
     minuteReport: false,
+    // 2026-11-21 加：把每步操作记进 Aurabot 工作区里的「看直播 · 工作间」会话（DSH 侧栏能看）。默认开。
+    opsSession: true,
   },
   // 面板是自定义的（panel.js 按大类分卡片）；字段清单放在 settingsSchema 里，自检脚本也读它。
   settings: [],
@@ -222,6 +227,8 @@ export default {
     // —— 调试 ——
     { key: 'browserPath', label: '浏览器路径', type: 'text', hint: '留空 = 自动找 Edge（找不到再找 Chrome / Chromium）', placeholder: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' },
     { key: 'minuteReport', label: '进房时通知我', type: 'switch', hint: '进房后私聊说一声' },
+    // —— 工作区操作记录（2026-11-21）——
+    { key: 'opsSession', label: '记录到工作区会话', type: 'switch', hint: '每步操作同时记进 Aurabot 工作区里的「看直播 · 工作间」会话，DSH 侧栏能点开看；本地也在 modules-data/kanzhibo/worklog 留一份' },
   ],
   panel: 'panel.js',   // 自动表单下面再加一张「风险与现场」卡（只读状态 + 误触提示）
 
@@ -262,6 +269,81 @@ export default {
       lastNote = new Date().toLocaleTimeString() + ' ' + text
       api.log[level] ? api.log[level](text) : api.log.info(text)
     }
+
+    // ================= 工作区操作记录（2026-11-21 新增）=================
+    // 要求：接一个会话到 Aurabot 的工作区，里面记录每步操作。
+    // 做法两层：
+    //   ① 每步先写一条到 modules-data/kanzhibo/worklog/YYYY-MM-DD.jsonl（本地留痕，模块重载后还在）；
+    //   ② 再接一条「看直播 · 工作间」的后台会话到「Aurabot · QQ」工作区
+    //      （chatId 是 system:kanzhibo:workbench，DSH 侧栏能点开），每 15 秒把这几步汇总记进去。
+    // 会话用 hub.runSystemTurn 建 / 复用（和自驱引擎的「工作间」同一套：system 会话、不带工具）。
+    // 写入失败只记 debug、绝不拖累挂直播主流程；关掉「记录到工作区会话」就只写本地 jsonl。
+    const opsEnabled = () => api.settings().opsSession !== false &&
+      Boolean(api.core && api.core.hub && typeof api.core.hub.runSystemTurn === 'function')
+    const opsSessionTitle = '看直播 · 工作间'
+    const worklogDir = () => join(api.dataDir(), 'worklog')
+    const worklogFile = (d = new Date()) => join(worklogDir(), dayKey(d) + '.jsonl')
+
+    // 内存里留最近 300 条（面板 / 命令直接读）；启动时把今天文件里的读回来。
+    let opsRecent = []
+    try {
+      const text = readFileSync(worklogFile(), 'utf8')
+      opsRecent = text.split('\n').filter(Boolean)
+        .map((l) => { try { return JSON.parse(l) } catch { return null } })
+        .filter(Boolean).slice(-300)
+    } catch { opsRecent = [] }
+
+    const fmtStep = (e) => {
+      const at = String((e && e.at) || '')
+      const t = at.length >= 19 ? at.slice(11, 19) : new Date().toLocaleTimeString('zh-CN', { hour12: false })
+      return t + ' ' + (e && e.ok === false ? '✗ ' : '· ') + String((e && e.step) || '') +
+        (e && e.detail ? '：' + e.detail : '')
+    }
+
+    // 会话写入：攒一会儿再发（15 秒一批），串行，写失败把这批放回队首下次再带。
+    let opsPending = []
+    let opsTimer = null
+    let opsTurn = Promise.resolve()
+    const OPS_FLUSH_MS = 15_000
+    const scheduleOpsFlush = () => {
+      if (opsTimer) return
+      opsTimer = setTimeout(() => { opsTimer = null; flushOpsSession() }, OPS_FLUSH_MS)
+      try { opsTimer.unref && opsTimer.unref() } catch {}
+    }
+    async function flushOpsSession() {
+      if (!opsEnabled() || !opsPending.length) return
+      const lines = opsPending.splice(0, opsPending.length)
+      const body = '【看直播工作间 · 自动记录，不是聊天】\n' + lines.join('\n') +
+        '\n（以上是这台机器「看直播」模块刚做的每步操作，只留档用。请只回复「已记录」两个字，不要展开。）'
+      const run = () => api.core.hub.runSystemTurn('kanzhibo', opsSessionTitle, body, { noTools: true, key: 'workbench', timeoutMs: 30_000 })
+      const task = opsTurn.then(run, run)
+      opsTurn = task.then(() => {}, (e) => {
+        opsPending = [...lines, ...opsPending].slice(-300)
+        note('工作间会话没写进去：' + ((e && e.message) || e), 'debug')
+      })
+      try { await task } catch {}
+    }
+
+    /** 记一步操作（真正做事的地方都调它）。ok=false 表示这步失败。 */
+    function journal(step, detail = '', ok = true) {
+      try {
+        const e = { at: new Date().toISOString(), step: String(step || '操作'), detail: String(detail || '').slice(0, 200), ok: ok !== false }
+        try {
+          mkdirSync(worklogDir(), { recursive: true })
+          appendFileSync(worklogFile(), JSON.stringify(e) + '\n', 'utf8')
+        } catch {}
+        opsRecent.push(e)
+        if (opsRecent.length > 300) opsRecent = opsRecent.slice(-300)
+        if (opsEnabled()) {
+          opsPending.push(fmtStep(e))
+          if (opsPending.length > 60) opsPending = opsPending.slice(-60)
+          scheduleOpsFlush()
+        }
+      } catch {}
+    }
+
+    /** 最近几步（面板 / /看直播 记录 用）。 */
+    const recentOps = (n = 20) => opsRecent.slice(-Math.max(1, Math.min(300, Number(n) || 20)))
 
     // 2026-11-09：checkSec 的钳制原来写散在 6 个地方，统一收进来（armTick / 自检 / 面板接口都用）。
     const clampCheckSec = () => Math.max(30, Math.min(1800, Number(api.settings().checkSec) || 120))
@@ -341,6 +423,26 @@ export default {
       return true
     }
 
+    /**
+     * 不 await 的通知（tick 里用，不能阻塞挂机流程）。
+     *
+     * 2026-11-11 修 BUG：原来直接写 `api.sendText(...).catch(() => {})`，
+     * 可 api.sendText 被出站策略拦下时返回的是 **null**，对 null 取 .catch 就抛
+     * 「Cannot read properties of null (reading 'catch')」—— 这个 TypeError 会被 tick 的
+     * 外层 catch 抓住，记成「挂直播出错」，让人以为是浏览器挂了，其实是消息被拦。
+     * 现在统一走这里：返回值可能是 Promise、也可能是 null，只管吞掉，绝不抛。
+     */
+    function notifyOwner(text) {
+      const chat = ownerChat()
+      if (!chat || !text) return
+      try {
+        const r = api.sendText(chat, String(text))
+        if (r && typeof r.catch === 'function') r.catch(() => {})
+      } catch (e) {
+        note('私聊没发出去：' + (e && e.message), 'debug')
+      }
+    }
+
     const shotsDir = () => {
       const dir = join(api.dataDir(), 'shots')
       try { mkdirSync(dir, { recursive: true }) } catch {}
@@ -416,6 +518,7 @@ export default {
       const opened = gate.open({ kind, label, prepared, data: data || {}, shot: full })
       if (!opened.ok) return { ok: false, message: opened.reason }
       armGate()
+      journal('动作等确认', label, true)
       const sec = Math.round(gate.ttlMs / 1000)
       const lines = [
         '【等你点头】' + label,
@@ -460,10 +563,12 @@ export default {
           const r = await commitBadge(action.prepared, pb, pl)
           // 文字结论由命令/工具的返回值带走（会回到对应聊天），这里只补一张结果截图，不重复打字。
           if (r.shot) { try { await tellOwner('', r.shot) } catch {} }
+          journal('确认续灯牌', r.message, r.ok)
           return (r.ok ? '✅ 灯牌：' : '⚠️ 灯牌：') + r.message
         }
         if (action.kind === 'gift') {
           const r = await commitGift(action.prepared, action.data.name, action.data.balance, action.data.directSend)
+          journal('确认送礼', r.message, r.ok)
           return (r.ok ? '✅ 礼物：' : '⚠️ 礼物：') + r.message
         }
         return '这个确认没认出来，先不点。'
@@ -484,6 +589,7 @@ export default {
         await cdp.send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 })
       } catch {}
       note('主人取消了：' + live.label, 'info')
+      journal('取消待确认', live.label, true)
       return '撤了，这次不点。'
     }
 
@@ -503,6 +609,7 @@ export default {
       badgeRejectStreak++
       saveState({ badgeRejectDay: today, badgeRejectStreak })
       note('灯牌这轮没成：' + why, 'warn')
+      journal('灯牌没成', why, false)
       if (badgeRejectStreak >= 3 && badgeGiveUpDay !== today) {
         badgeGiveUpDay = today
         // 1.0.2：记下是在哪个房间放弃的 —— 换房间后标记自动作废，不用手动重开。
@@ -1270,12 +1377,12 @@ export default {
 
     /** 按优先级找「要按的那个按钮」：一次扫描 → 按文字分组判唯一 → 连续两帧同一签名才收。 */
     async function findBadgeConfirm(tries) {
-      const rounds = Math.max(2, Math.min(6, Number(tries) || 2))
+      const rounds = Math.max(2, Math.min(16, Number(tries) || 2))
       let prev = null // 上一帧选中的（文字 + 签名 + 位置），用于「两帧一致才动手」
       const reasons = []
       for (let round = 0; round < rounds; round++) {
         const found = await clicker.find({ ...BADGE_CONFIRM_SPEC, text: BADGE_CONFIRM_SCAN })
-        if (found.error) { reasons.push(found.error); if (round + 1 < rounds) await sleep(250); continue }
+        if (found.error) { reasons.push(found.error); if (round + 1 < rounds) await sleep(60); continue }
         const list = found.list || []
         for (const text of BADGE_CONFIRM_TEXTS) {
           let re
@@ -1302,11 +1409,11 @@ export default {
           // 连续两帧签名一样才收（和 DOM 通道一个规矩：别按一个正在动的按钮）
           if (prev && prev.channel === 'ax' && prev.axSig === axr.axSig) return axr
           prev = { channel: 'ax', axSig: axr.axSig }
-          if (round + 1 < rounds) { await sleep(250); continue }
+          if (round + 1 < rounds) { await sleep(60); continue }
           return axr
         }
         reasons.push(axr.reason)
-        if (round + 1 < rounds) await sleep(250)
+        if (round + 1 < rounds) await sleep(60)
       }
       return { ok: false, reason: '几个可能的按钮都没找到或不稳定（' + reasons.filter(Boolean).slice(0, 3).join('；') + '）' }
     }
@@ -1437,7 +1544,7 @@ export default {
       }
 
       // 面板可能已经开着：先看按钮在不在，在就直接用（再点入口会把它关掉）
-      let prep = await findBadgeConfirm(2)
+      let prep = await findBadgeConfirm(10)
       let entryText = ''
       let panelJustOpened = false
       if (!prep.ok) {
@@ -1448,13 +1555,13 @@ export default {
         const h2 = badgeHintsFromText(t2)
         const panelOpen = badgeTaskRowFromText(t2) || h2.hasIntimacy || h2.hasRestoreMedal || h2.hasStash
         if (panelOpen) {
-          prep = await findBadgeConfirm(6)
+          prep = await findBadgeConfirm(12)
         } else {
           const opened = await openBadgePanel()
           if (!opened.ok) return { ok: false, message: opened.message }
           entryText = opened.entry
           panelJustOpened = opened.justOpened
-          prep = await findBadgeConfirm(10)
+          prep = await findBadgeConfirm(16)
         }
       }
       if (!prep.ok) {
@@ -1823,7 +1930,7 @@ export default {
     /** 送礼一轮：半自动先问主人，自动直接点。 */
     async function sendGift(giftName) {
       const prep = await prepareGift(giftName)
-      if (!prep.ok) return prep
+      if (!prep.ok) { journal('准备送礼', prep.message, false); return prep }
       if (api.settings().semiAuto) {
         return await askOwner({
           kind: 'gift',
@@ -1835,7 +1942,9 @@ export default {
           data: { name: prep.name, balance: prep.balance, directSend: prep.directSend },
         })
       }
-      return await commitGift(prep.prepared, prep.name, prep.balance, prep.directSend)
+      const r = await commitGift(prep.prepared, prep.name, prep.balance, prep.directSend)
+      journal('送礼', r.ok ? ('送「' + prep.name + '」×1') : r.message, r.ok)
+      return r
     }
 
     /**
@@ -2010,14 +2119,14 @@ export default {
             if (!wasNotified) {
               markLiveNotify(key)
               const owner = api.config().ownerQQ
-              if (owner) api.sendText('private:' + owner, '📣 主播开播了，我已经进去挂着了：' + now2).catch(() => {})
+              if (owner) notifyOwner('📣 主播开播了，我已经进去挂着了：' + now2)
               note('开播提醒：' + now2)
             }
             return { ok: true, url: now2, joined: true, notified: true }
           }
           return { ...r, ok: r.ok, url }
         }
-        if (r.joined) bumpRoom()
+        if (r.joined) { bumpRoom(); journal('进房', url, true) }
 
         // 地址还在 /live/ 里不代表主播还在播：下播后 URL 不变，页面会写「直播已结束」。
         if (!force) {
@@ -2028,6 +2137,7 @@ export default {
               await closeBrowser()
               note('主播下播了（' + why + '），把直播间浏览器关了', 'info')
             }
+            journal('主播下播', why, false)
             return { ok: false, message: '主播下播了：' + why + '（浏览器已关，等下一轮再看）', url, ended: true }
           }
         }
@@ -2046,8 +2156,10 @@ export default {
               commentedDay = today
               saveState({ commentedUrl: url, commentedDay: today })
               note('进房评论：' + text + '（今天不再发了）')
+              journal('进房评论', text, true)
             } else {
               note('评论没发成：' + sent.message, 'warn')
+              journal('进房评论', sent.message, false)
             }
           } else {
             note('页面 30 秒还没加载出评论框，这次没发评论', 'warn')
@@ -2094,8 +2206,8 @@ export default {
               const waitMs = Math.max(5, Math.min(600, Number(api.settings().badgeDelaySec) || 30)) * 1000
               await sleep(waitMs)
               r2 = await doBadge()
-              if (r2.pending) note('灯牌：' + r2.message, 'info')
-              else if (r2.ok) note('灯牌：' + r2.message, 'info')
+              if (r2.pending) { note('灯牌：' + r2.message, 'info'); journal('灯牌等确认', r2.message, true) }
+              else if (r2.ok) { note('灯牌：' + r2.message, 'info'); journal('续灯牌', r2.message, true) }
               else await badgeReject(r2.message || '没点成', curRoom)
               await sleep(1500)
               // 2026-11-08 修：原来这里又用 badgeSent() 覆盖结论，而它只认「今日任务」那一行；
@@ -2120,7 +2232,7 @@ export default {
                 // 只有自动模式才在这里通知；半自动是主人在私聊里点的，confirmPending 的回复就够了。
                 const owner = api.config().ownerQQ
                 if (owner && !api.settings().semiAuto) {
-                  api.sendText('private:' + owner, '今天的灯牌已经送出了（' + ((r2 && r2.evidence) || '已确认') + '）').catch(() => {})
+                  notifyOwner('今天的灯牌已经送出了（' + ((r2 && r2.evidence) || '已确认') + '）')
                 }
               }
             } else if (!r2 || !r2.pending) {
@@ -2128,7 +2240,7 @@ export default {
               // 自动模式下失败也要告诉主人一次（半自动时他本来就在私聊里等结果）
               if (!api.settings().semiAuto) {
                 const owner = api.config().ownerQQ
-                if (owner) api.sendText('private:' + owner, '⚠️ 灯牌这轮没成：' + ((r2 && r2.message) || '没读到证据')).catch(() => {})
+                if (owner) notifyOwner('⚠️ 灯牌这轮没成：' + ((r2 && r2.message) || '没读到证据'))
               }
             }
           }
@@ -2141,7 +2253,7 @@ export default {
           cleanShots() // 顺手把过期截图清了（进房一天顶多几次，开销可忽略）
           if (api.settings().minuteReport) {
             const owner = api.config().ownerQQ
-            if (owner) api.sendText('private:' + owner, '我去看直播了：' + url).catch(() => {})
+            if (owner) notifyOwner('我去看直播了：' + url)
           }
         }
         // F3 日报：每天第一次成功进房后发一条（当天已发过就静默跳过）
@@ -2156,6 +2268,7 @@ export default {
         //   现在：只有「连接本身坏了」才断开；普通异常记日志就行，连接留着。
         const msg = (error && error.message) ? error.message : String(error)
         note('挂直播出错：' + msg, 'warn')
+        journal('挂直播出错', msg, false)
         if (cdp && /websocket|not connected|socket|ECONN|连接断开|已关闭/i.test(msg)) {
           try { cdp.close() } catch {}
           cdp = null
@@ -2177,8 +2290,10 @@ export default {
         const url = await currentUrl()
         if (LIVE_RE.test(url)) {
           note('进了直播间：' + url)
+          journal('进直播间', url, true)
           return { ok: true, url, message: '进直播间了：' + url }
         }
+        journal('打开直播间页面', r.message || (url || target), false)
         return { ok: true, url, message: r.message || '打开了页面：' + (url || target) }
       } catch (error) {
         note('手动进直播间失败：' + error.message, 'warn')
@@ -2196,6 +2311,7 @@ export default {
       saveState({ quietUntil })
       api.saveSettings({ enabled: false })
       await dailyReport('收工')
+      journal('收工', '关浏览器，半小时内不再自己进')
       return { ok: true, message: '直播看完了，浏览器关了（半小时内不会自己再进）' }
     }
 
@@ -2347,6 +2463,7 @@ export default {
           if (wait) return { ok: false, message: '刚发过一条弹幕，' + wait + ' 秒后再发（连发容易触发抖音风控）' }
           const r = await sendComment(text)
           if (r.ok) { markSaySent(); pushSayLog(text) }
+          journal('发弹幕', r.ok ? text : r.message, r.ok)
           return r
         },
       })
@@ -2402,6 +2519,8 @@ export default {
         '视口：' + (viewport ? viewport.w + '×' + viewport.h + ' · DPR ' + viewport.dpr + ' · 缩放 ' + viewport.scale : '还没读（进房后才有）') +
           (viewport && viewport.w >= 1500 ? '（已最大化）' : ''),
         '待确认：' + (gate.peek() ? gate.peek().label + '（' + Math.round((gate.peek().deadline - Date.now()) / 1000) + ' 秒后作废）' : '没有'),
+        '工作区记录：' + (opsEnabled() ? '开（每步写到「' + opsSessionTitle + '」会话，DSH 侧栏能看到）' : '关（只记本地 jsonl）') +
+          '｜今天 ' + opsRecent.length + ' 步',
         '状态文件：' + stateFile(),
         '最近一条：' + (lastNote || '（还没有）'),
       ].join('\n')
@@ -2456,6 +2575,7 @@ export default {
       port = 0
       viewport = null
       note('总开关关了：定时器、浏览器、待确认都停了' + (why ? '（' + why + '）' : ''), 'info')
+      journal('关总开关', why || '定时器、浏览器、待确认都停了')
     }
     /**
      * 按当前开关状态把运行态调成对应的样子。
@@ -2499,7 +2619,7 @@ export default {
     api.command({
       name: '看直播',
       aliases: ['kanzhibo'],
-      desc: '挂直播间：/看直播 开、关、状态、进、收工、灯牌、换 <房间号|链接>、说 <内容>（私聊发弹幕）、确认、取消、自检',
+      desc: '挂直播间：/看直播 开、关、状态、进、收工、灯牌、换 <房间号|链接>、说 <内容>（私聊发弹幕）、记录、确认、取消、自检',
       run: async (arg, msg) => {
         const cmd = String(arg || '').trim()
         if (!cmd || cmd === '状态') {
@@ -2555,6 +2675,7 @@ export default {
             if (wait) return '刚发过一条弹幕，' + wait + ' 秒后再发（连发容易触发抖音风控）'
             const r = await sendComment(content)
             if (r.ok) { markSaySent(); pushSayLog(content) }
+            journal('发弹幕', r.ok ? content : r.message, r.ok)
             return r.ok ? r.message : '没发出去：' + r.message
           }
         }
@@ -2586,7 +2707,14 @@ export default {
           saveState({ quietUntil })
           return '浏览器关了；半小时内不会自己再进（要立刻回来说 /看直播 进）'
         }
-        return '能用的有：开 / 关 / 状态 / 进 / 收工 / 灯牌 / 说 <内容>（私聊发弹幕） / 确认 / 取消 / 自检'
+        if (cmd === '记录' || cmd === '日志') {
+          const rows = recentOps(20)
+          return (rows.length ? rows.map(fmtStep).join('\n') : '还没有操作记录') +
+            (opsEnabled()
+              ? '\n完整记录在 DSH 侧栏「QQ · ' + opsSessionTitle + '」会话里'
+              : '\n（工作区记录关着：面板里打开「记录到工作区会话」）')
+        }
+        return '能用的有：开 / 关 / 状态 / 进 / 收工 / 灯牌 / 说 <内容>（私聊发弹幕） / 记录 / 确认 / 取消 / 自检'
       },
     })
 
@@ -2847,7 +2975,16 @@ export default {
         semiAuto: Boolean(s.semiAuto), pending: gate.state(), viewport,
         leftoverPort: leftover,
         say: { maxChars: SAY_MAX_CHARS, gapMs: SAY_GAP_MS, waitSec: sayWaitSec(), inRoom: Boolean(cdp) },
+        ops: { enabled: opsEnabled(), session: opsSessionTitle, today: opsRecent.length },
       }
+    })
+
+    // —— 2026-11-21 加：工作区操作记录（面板卡片 / 脚本都能读）——
+    api.route('/ops', async (req) => {
+      let q = {}
+      try { q = (api.core.http && api.core.http.query && api.core.http.query(req)) || {} } catch {}
+      const n = Number(q.n || 30)
+      return { ok: true, enabled: opsEnabled(), session: opsSessionTitle, count: opsRecent.length, items: recentOps(n) }
     })
 
     // —— 0.9.9 面板入口：在面板上直接发弹幕 ——
@@ -2869,6 +3006,7 @@ export default {
       if (!LIVE_RE.test(await currentUrl())) return { ok: false, message: '现在不在直播间里' }
       const r = await sendComment(text)
       if (r.ok) { markSaySent(); pushSayLog(text); note('面板发弹幕：' + text.slice(0, 20)) }
+      journal('面板发弹幕', r.ok ? text : r.message, r.ok)
       return r
     })
 
@@ -2906,6 +3044,8 @@ export default {
         roomId: cdp ? liveRoomId(curUrl) : '',
         // F4：今天的弹幕记录
         sayToday: sayLog.day === dayKey() ? sayLog.items.slice(-10) : [],
+        // 2026-11-21：工作区操作记录（面板「工作区记录」卡用最近几步）
+        ops: { enabled: opsEnabled(), session: opsSessionTitle, count: opsRecent.length, items: recentOps(8) },
         today: dayKey(),
         text: await selfCheck(),
       }
@@ -2919,6 +3059,9 @@ export default {
       //   返回的是不同类型的对象，混用根本清不掉）。定时器清不掉 = 模块停了它还会醒。
       if (tickTimer) { clearTimeout(tickTimer); tickTimer = null }
       if (gateLater) { try { gateLater() } catch {} gateLater = null }
+      // 2026-11-21：工作区记录没发出去的那批，停模块前尽量补一次（失败就算了，本地 jsonl 已经写了）
+      if (opsTimer) { clearTimeout(opsTimer); opsTimer = null }
+      try { flushOpsSession().catch(() => {}) } catch {}
       try { gate.dispose() } catch {}
       // 停模块时也要把那台浏览器带走 —— 它是 detached 启动的，不会自己退。
       // 这里不能 await（onDispose 是同步回调），但 closeBrowser 内部先把同步部分做完。
@@ -2931,7 +3074,7 @@ export default {
       tick,
       selfCheck,
       status: () => ({ enabled: api.settings().enabled, target: api.settings().target, connected: Boolean(cdp) }),
-      _debug: { inWindow, dayKey, findBrowser, roomKeyOf, giveUpRoomsDiffer, sayState: () => ({ lastSayAt, gapMs: SAY_GAP_MS, maxChars: SAY_MAX_CHARS }) },
+      _debug: { inWindow, dayKey, findBrowser, roomKeyOf, giveUpRoomsDiffer, sayState: () => ({ lastSayAt, gapMs: SAY_GAP_MS, maxChars: SAY_MAX_CHARS }), opsState: () => ({ enabled: opsEnabled(), session: opsSessionTitle, items: recentOps(50) }) },
     }
   },
 }
