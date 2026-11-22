@@ -102,6 +102,64 @@
       "publishedAt": "2026-11-11T07:51:51.201Z"
     },
     {
+      "id": "auto-contact",
+      "name": "自动接待",
+      "version": "1.0.0",
+      "description": "自动通过好友申请和群邀请并写入白名单；#sl 只有主人能触发",
+      "category": "manage",
+      "tags": [
+        "自动同意",
+        "好友",
+        "加群",
+        "白名单",
+        "私聊"
+      ],
+      "author": "HDB-Studio",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [],
+      "capabilities": [
+        "plugin-config"
+      ],
+      "replacesBuiltin": false,
+      "tag": "auto-contact-v1.0.0",
+      "file": "auto-contact-v1.0.0.zip",
+      "path": "auto-contact-v1.0.0/auto-contact-v1.0.0.zip",
+      "size": 6248,
+      "sha256": "b852f49df49b12ddd85eb36b23d845e1b96130409af7cfd3701c9f6e036287e5",
+      "commit": "ea7f67b03dccacd3176358339becc9fd9d884f6e",
+      "publishedAt": "2026-11-22T16:15:27.865Z"
+    },
+    {
+      "id": "autolike",
+      "name": "自动回赞",
+      "version": "1.0.0",
+      "description": "有人给大肥鱼的资料点赞时，悄悄给对方回一个赞；说「赞我」也能点，同一个号一天只点一次。",
+      "category": "social",
+      "tags": [
+        "点赞",
+        "回赞",
+        "自动"
+      ],
+      "author": "DFH-clouds",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [],
+      "capabilities": [
+        "plugin-config"
+      ],
+      "replacesBuiltin": false,
+      "tag": "autolike-v1.0.0",
+      "file": "autolike-v1.0.0.zip",
+      "path": "autolike-v1.0.0/autolike-v1.0.0.zip",
+      "size": 4843,
+      "sha256": "c71bb6c2614ef4e2606643f01ccce7192039a16c028de499dfba0b391ce83dae",
+      "commit": "ea7f67b03dccacd3176358339becc9fd9d884f6e",
+      "publishedAt": "2026-11-22T16:15:27.865Z"
+    },
+    {
       "id": "autonomy",
       "name": "自主生活",
       "version": "0.6.1",
@@ -260,6 +318,36 @@
       "publishedAt": "2026-11-21T13:46:55.334Z"
     },
     {
+      "id": "birthday-keeper",
+      "name": "生日管家",
+      "version": "1.0.0",
+      "description": "记录生日并在作息时间窗内随机送祝福，可 @ 本人；生日从资料和聊天里自动学习",
+      "category": "social",
+      "tags": [
+        "生日",
+        "祝福",
+        "纪念日",
+        "群聊"
+      ],
+      "author": "HDB-Studio",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [],
+      "capabilities": [
+        "plugin-config",
+        "filesystem"
+      ],
+      "replacesBuiltin": false,
+      "tag": "birthday-keeper-v1.0.0",
+      "file": "birthday-keeper-v1.0.0.zip",
+      "path": "birthday-keeper-v1.0.0/birthday-keeper-v1.0.0.zip",
+      "size": 10946,
+      "sha256": "3ce75187973525bd9f96c00c8ea7bd5471ffc8df0659cf2a41222538e8b76690",
+      "commit": "ea7f67b03dccacd3176358339becc9fd9d884f6e",
+      "publishedAt": "2026-11-22T16:15:27.865Z"
+    },
+    {
       "id": "breeze",
       "name": "Breeze 语音",
       "version": "1.3.3",
@@ -326,7 +414,7 @@
     {
       "id": "cabinworld",
       "name": "小屋世界",
-      "version": "0.4.3",
+      "version": "0.4.4",
       "description": "给大肥鱼一个会走路的身体：Cabin World 像素小世界，去公园、荡秋千、钓鱼、买零食、在餐厅点菜、回家睡觉、去电玩城玩一局，动作由游戏判定并记进记忆。模块本体只有代码、不含游戏，装好后点「一键安装」从上游 Release 下载。",
       "category": "tool",
       "tags": [
@@ -353,13 +441,13 @@
       ],
       "replacesBuiltin": false,
       "homepage": "https://github.com/BabyBus2022/cabin-world",
-      "tag": "cabinworld-v0.4.3",
-      "file": "cabinworld-v0.4.3.zip",
-      "path": "cabinworld-v0.4.3/cabinworld-v0.4.3.zip",
-      "size": 95240,
-      "sha256": "8ec09a012774f183952dcb6354e1890b53ee64dcb48510a8116e82c1b66248d8",
-      "commit": "4927d9dbcc4c932a32b99b402cef737382f9717f",
-      "publishedAt": "2026-11-21T13:46:55.334Z"
+      "tag": "cabinworld-v0.4.4",
+      "file": "cabinworld-v0.4.4.zip",
+      "path": "cabinworld-v0.4.4/cabinworld-v0.4.4.zip",
+      "size": 107774,
+      "sha256": "0c24661bb534f30fdc54b94d04e294c013d9d359a1e8d36ae2bee632f5aa613d",
+      "commit": "ea7f67b03dccacd3176358339becc9fd9d884f6e",
+      "publishedAt": "2026-11-22T16:15:27.865Z"
     },
     {
       "id": "callme",
@@ -549,6 +637,38 @@
       "publishedAt": "2026-11-02T04:14:04.226Z"
     },
     {
+      "id": "dual-persona",
+      "name": "双重人格",
+      "version": "1.4.1",
+      "description": "老实聊天，很枯燥吧。支持定时切换人格、随机切换人格——还能按月排班、按心情换，随机模式可以只影响当前会话。设置里一个「启用双重人格」开关，打开后默认按「人格分裂」：填一串 QQ 号（群号、私聊号都行）就能给不同的聊天配不同的人格卡；也可以切成「全局人格切换」。我有一个善人格，一个恶人格。",
+      "category": "social",
+      "tags": [
+        "人格",
+        "人设",
+        "定时",
+        "随机",
+        "心情"
+      ],
+      "author": "Cinderlia",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.3.0",
+      "requires": [],
+      "capabilities": [
+        "filesystem",
+        "plugin-config",
+        "plugin-internals"
+      ],
+      "replacesBuiltin": false,
+      "tag": "dual-persona-v1.4.1",
+      "file": "dual-persona-v1.4.1.zip",
+      "path": "dual-persona-v1.4.1/dual-persona-v1.4.1.zip",
+      "size": 27518,
+      "sha256": "45f5c84dfb58961ccd195ca34bc05674e59526374824bdde9e15189f8f92849c",
+      "commit": "ea7f67b03dccacd3176358339becc9fd9d884f6e",
+      "publishedAt": "2026-11-22T16:15:27.865Z"
+    },
+    {
       "id": "duel",
       "name": "宝可梦对决",
       "version": "1.0.0",
@@ -577,6 +697,34 @@
       "sha256": "8dc217737e175459cb8e6dec871a230d38511439ca727447d142b7e7392d67e9",
       "commit": "4927d9dbcc4c932a32b99b402cef737382f9717f",
       "publishedAt": "2026-11-21T13:46:55.334Z"
+    },
+    {
+      "id": "emoji-react",
+      "name": "表情回应拓展",
+      "version": "1.0.0",
+      "description": "遇到合适的消息才贴一个表情回应，由模型自己判断；不发言、不刷屏",
+      "category": "social",
+      "tags": [
+        "表情回应",
+        "reaction",
+        "互动"
+      ],
+      "author": "HDB-Studio",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [],
+      "capabilities": [
+        "plugin-config"
+      ],
+      "replacesBuiltin": false,
+      "tag": "emoji-react-v1.0.0",
+      "file": "emoji-react-v1.0.0.zip",
+      "path": "emoji-react-v1.0.0/emoji-react-v1.0.0.zip",
+      "size": 5950,
+      "sha256": "d75a122204482e2c9c00336fc1bd684ad820a63af588381c48a57b172379d2c1",
+      "commit": "ea7f67b03dccacd3176358339becc9fd9d884f6e",
+      "publishedAt": "2026-11-22T16:15:27.865Z"
     },
     {
       "id": "feed",
@@ -645,13 +793,46 @@
       "publishedAt": "2026-11-07T14:19:28.212Z"
     },
     {
+      "id": "github-assistant",
+      "name": "GitHub 助手",
+      "version": "1.0.0",
+      "description": "私聊盯 CI 失败、待审 PR 和被 @；群聊 #项目 看仓库状态，显示细项可调",
+      "category": "tool",
+      "tags": [
+        "GitHub",
+        "CI",
+        "PR",
+        "仓库状态"
+      ],
+      "author": "HDB-Studio",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [],
+      "capabilities": [
+        "network",
+        "filesystem",
+        "plugin-config"
+      ],
+      "replacesBuiltin": false,
+      "tag": "github-assistant-v1.0.0",
+      "file": "github-assistant-v1.0.0.zip",
+      "path": "github-assistant-v1.0.0/github-assistant-v1.0.0.zip",
+      "size": 10514,
+      "sha256": "1160b9414f8d31ab32322aa53692bca45cfd928dd48d5f4bda1886bd6a7fbb33",
+      "commit": "ea7f67b03dccacd3176358339becc9fd9d884f6e",
+      "publishedAt": "2026-11-22T16:15:27.865Z"
+    },
+    {
       "id": "group-admin",
       "name": "群管",
-      "version": "1.0.3",
-      "description": "主人开口时帮忙管群：禁言、解禁、踢人、改头衔、发公告。她也知道自己在群里有没有管理权限。",
+      "version": "1.1.1",
+      "description": "主人开口时帮忙管群：禁言、解禁、踢人、改头衔、发公告、全体禁言；自带群管白名单，白名单里的人可以直接发指令触发。",
       "category": "manage",
       "tags": [
-        "群管"
+        "群管",
+        "全体禁言",
+        "白名单"
       ],
       "author": "accomplish07zrh-eng",
       "license": "MIT",
@@ -664,13 +845,13 @@
       ],
       "replacesBuiltin": false,
       "homepage": "https://github.com/accomplish07zrh-eng/dsh-aurabot-qq",
-      "tag": "group-admin-v1.0.3",
-      "file": "group-admin-v1.0.3.zip",
-      "path": "group-admin-v1.0.3/group-admin-v1.0.3.zip",
-      "size": 4003,
-      "sha256": "90a5c7df53ab38f21ae49a6c3bde6933c7f173c4fe58fcfdfeda0425d624b22f",
-      "commit": "3827609ce75cd6cb67d60ebd01b7a62f0d9cf448",
-      "publishedAt": "2026-11-06T06:03:15.318Z"
+      "tag": "group-admin-v1.1.1",
+      "file": "group-admin-v1.1.1.zip",
+      "path": "group-admin-v1.1.1/group-admin-v1.1.1.zip",
+      "size": 7198,
+      "sha256": "c325d060f30bdef5591fd0a639a3c5d89149700dc5a1ff792ea93ad3e07c5fb7",
+      "commit": "ea7f67b03dccacd3176358339becc9fd9d884f6e",
+      "publishedAt": "2026-11-22T16:15:27.865Z"
     },
     {
       "id": "group-topic-boundary",
@@ -828,8 +1009,8 @@
     {
       "id": "kanzhibo",
       "name": "抖音看直播",
-      "version": "1.0.3",
-      "description": "用独立浏览器（Edge/Chrome）经 CDP 挂在抖音直播间：进房、发一条定制评论、续粉丝团灯牌、主人在 QQ 私聊里命令发弹幕、开播主动提醒；点之前先验面板，点后按 +100 / 聊天播报 / 进度三级确认。",
+      "version": "1.1.0",
+      "description": "用独立浏览器（Edge/Chrome）经 CDP 挂在抖音直播间：进房、发一条定制评论、续粉丝团灯牌、主人在 QQ 私聊里命令发弹幕、开播主动提醒；点之前先验面板，点后按 +100 / 聊天播报 / 进度三级确认。新增「工作区操作记录」：每步操作记进 Aurabot 工作区的「看直播 · 工作间」会话。",
       "category": "platform",
       "tags": [
         "抖音",
@@ -851,13 +1032,13 @@
         "plugin-internals"
       ],
       "replacesBuiltin": false,
-      "tag": "kanzhibo-v1.0.3",
-      "file": "kanzhibo-v1.0.3.zip",
-      "path": "kanzhibo-v1.0.3/kanzhibo-v1.0.3.zip",
-      "size": 110354,
-      "sha256": "ab5c96085aa43255fab90aa7c34549c5ee32a8b992ae373afc6c060018255ac3",
-      "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
-      "publishedAt": "2026-11-11T07:51:51.201Z"
+      "tag": "kanzhibo-v1.1.0",
+      "file": "kanzhibo-v1.1.0.zip",
+      "path": "kanzhibo-v1.1.0/kanzhibo-v1.1.0.zip",
+      "size": 114625,
+      "sha256": "0da6dd99c1f32719ffd1b6d7057bd6535cf3954cbc79c4402117fdc2884957a2",
+      "commit": "ea7f67b03dccacd3176358339becc9fd9d884f6e",
+      "publishedAt": "2026-11-22T16:15:27.865Z"
     },
     {
       "id": "little-notes",
@@ -924,8 +1105,8 @@
     {
       "id": "local-diary",
       "name": "私人日记",
-      "version": "1.0.1",
-      "description": "每天写一篇 md 私人日记到本地文件夹，写给她自己看；随插件备份一起搬家",
+      "version": "1.1.0",
+      "description": "给大肥鱼一本只属于她的日记本：每天晚上自己写一篇 md，不限长短、不套模板，只存本地、不发给任何人。会带入当天的聊天、心情和看过的东西，写完回流进记忆，聊天时她还能自己翻旧日记；末尾想许几个愿就许几个。面板里是一本能翻页的日记本，随插件备份一起搬家",
       "category": "tool",
       "tags": [
         "日记",
@@ -943,13 +1124,13 @@
         "plugin-internals"
       ],
       "replacesBuiltin": false,
-      "tag": "local-diary-v1.0.1",
-      "file": "local-diary-v1.0.1.zip",
-      "path": "local-diary-v1.0.1/local-diary-v1.0.1.zip",
-      "size": 16054,
-      "sha256": "5d6d5f973541a21d1c5a2e4294c422302f0b3b5bd34d4965c704e586929ce488",
-      "commit": "4927d9dbcc4c932a32b99b402cef737382f9717f",
-      "publishedAt": "2026-11-21T13:46:55.334Z"
+      "tag": "local-diary-v1.1.0",
+      "file": "local-diary-v1.1.0.zip",
+      "path": "local-diary-v1.1.0/local-diary-v1.1.0.zip",
+      "size": 21703,
+      "sha256": "4581f35be8bf41f31a49b0d9422544b22187086c4590cc5228e3e297d141a03a",
+      "commit": "ea7f67b03dccacd3176358339becc9fd9d884f6e",
+      "publishedAt": "2026-11-22T16:15:27.865Z"
     },
     {
       "id": "love-mode",
@@ -1238,6 +1419,36 @@
       "publishedAt": "2026-11-07T14:19:58.408Z"
     },
     {
+      "id": "moyu-calendar",
+      "name": "摸鱼人日历",
+      "version": "1.0.4",
+      "description": "每天从公众号「摸鱼人日历」取当日日历图，定时发到指定 QQ 聊天。",
+      "category": "tool",
+      "tags": [
+        "摸鱼",
+        "日历",
+        "公众号"
+      ],
+      "author": "Earmo",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [],
+      "capabilities": [
+        "network",
+        "filesystem",
+        "plugin-config"
+      ],
+      "replacesBuiltin": false,
+      "tag": "moyu-calendar-v1.0.4",
+      "file": "moyu-calendar-v1.0.4.zip",
+      "path": "moyu-calendar-v1.0.4/moyu-calendar-v1.0.4.zip",
+      "size": 25946,
+      "sha256": "95a155c82064d34fe31a33fd002e76505a97947e978c6d8d51e3ba79a622bbb4",
+      "commit": "ea7f67b03dccacd3176358339becc9fd9d884f6e",
+      "publishedAt": "2026-11-22T16:15:27.865Z"
+    },
+    {
       "id": "music-discovery",
       "name": "搜歌与推荐",
       "version": "0.2.0",
@@ -1301,6 +1512,37 @@
       "sha256": "d7b223660c8e5d8c058ead08baea58045708d8804ad6f1f77c4773a4696efbb7",
       "commit": "20db89790ba4864dd02b948c0ec02fbf12495216",
       "publishedAt": "2026-11-11T07:51:51.201Z"
+    },
+    {
+      "id": "nickname-memory",
+      "name": "昵称记忆",
+      "version": "1.2.1",
+      "description": "她会记住大家怎么称呼一个人（也能自己给对方起个叫法），以后就用这个称呼叫对方；新叫法会顶掉旧的。称呼本只给主人看，群里的叫法不跨聊天串。",
+      "category": "social",
+      "tags": [
+        "昵称",
+        "称呼",
+        "认人",
+        "记忆"
+      ],
+      "author": "Cinderlia",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.3.0",
+      "requires": [],
+      "capabilities": [
+        "filesystem",
+        "plugin-config",
+        "plugin-internals"
+      ],
+      "replacesBuiltin": false,
+      "tag": "nickname-memory-v1.2.1",
+      "file": "nickname-memory-v1.2.1.zip",
+      "path": "nickname-memory-v1.2.1/nickname-memory-v1.2.1.zip",
+      "size": 16968,
+      "sha256": "14a04e2f230f075074d7d75f20a7abc71d857610e11f4ec65a6d0bf032fe8e0b",
+      "commit": "ea7f67b03dccacd3176358339becc9fd9d884f6e",
+      "publishedAt": "2026-11-22T16:15:27.865Z"
     },
     {
       "id": "night",
@@ -1398,7 +1640,7 @@
     {
       "id": "pet",
       "name": "桌宠",
-      "version": "1.0.19",
+      "version": "1.0.20",
       "description": "把大肥鱼请到桌面上：会冒气泡、做小动作，你在干活时也陪着你。",
       "category": "desktop",
       "tags": [
@@ -1419,13 +1661,13 @@
       ],
       "replacesBuiltin": false,
       "homepage": "https://github.com/accomplish07zrh-eng/dsh-aurabot-qq",
-      "tag": "pet-v1.0.19",
-      "file": "pet-v1.0.19.zip",
-      "path": "pet-v1.0.19/pet-v1.0.19.zip",
-      "size": 224858,
-      "sha256": "0187ba42a4c2f598d6c41d45b8eebecae789f04d0ccfe6ce685941ae1f3fd44c",
-      "commit": "4927d9dbcc4c932a32b99b402cef737382f9717f",
-      "publishedAt": "2026-11-21T13:46:55.334Z"
+      "tag": "pet-v1.0.20",
+      "file": "pet-v1.0.20.zip",
+      "path": "pet-v1.0.20/pet-v1.0.20.zip",
+      "size": 225810,
+      "sha256": "33e76a215b1d80dffbb81304e1f6b417a7180ce8da3ac49039e0f87822ca16d7",
+      "commit": "ea7f67b03dccacd3176358339becc9fd9d884f6e",
+      "publishedAt": "2026-11-22T16:15:27.865Z"
     },
     {
       "id": "phone",
@@ -1592,6 +1834,35 @@
       "publishedAt": "2026-11-21T13:46:55.334Z"
     },
     {
+      "id": "rich-input",
+      "name": "看得见的东西",
+      "version": "1.6.0",
+      "description": "把 [图片] 变成真正交给模型的图片（看不了图就用看图模型转汉字、不行再换回退模型）；把 [合并转发] 展开成 {昵称(QQ):内容;…}",
+      "category": "tool",
+      "tags": [
+        "看图",
+        "合并转发",
+        "图片",
+        "视觉"
+      ],
+      "author": "kmizmal",
+      "license": "CC-BY-NC-SA-4.0",
+      "api": 1,
+      "minPluginVersion": "1.2.1",
+      "requires": [],
+      "capabilities": [
+        "plugin-internals"
+      ],
+      "replacesBuiltin": false,
+      "tag": "rich-input-v1.6.0",
+      "file": "rich-input-v1.6.0.zip",
+      "path": "rich-input-v1.6.0/rich-input-v1.6.0.zip",
+      "size": 32575,
+      "sha256": "d34c344bf8daf5207b160e38c0c4e6d718393b5239c2c583484c754530dbda31",
+      "commit": "ea7f67b03dccacd3176358339becc9fd9d884f6e",
+      "publishedAt": "2026-11-22T16:15:27.865Z"
+    },
+    {
       "id": "roast-mode",
       "name": "毒舌模式",
       "version": "1.0.4",
@@ -1654,6 +1925,40 @@
       "publishedAt": "2026-11-21T13:46:55.334Z"
     },
     {
+      "id": "roost-bridge",
+      "name": "官方机器人接入",
+      "version": "0.1.2",
+      "description": "内置 roost 复制到数据目录运行、扫码建机器人、一键配 OneBot 兼容层，把大肥鱼接到 QQ 官方机器人",
+      "category": "tool",
+      "tags": [
+        "官方机器人",
+        "roost",
+        "接入",
+        "一键配置"
+      ],
+      "author": "tdcq9594",
+      "license": "AGPL-3.0-only",
+      "api": 1,
+      "minPluginVersion": "1.3.0",
+      "requires": [],
+      "capabilities": [
+        "network",
+        "filesystem",
+        "process",
+        "plugin-config",
+        "dynamic-code",
+        "plugin-internals"
+      ],
+      "replacesBuiltin": false,
+      "tag": "roost-bridge-v0.1.2",
+      "file": "roost-bridge-v0.1.2.zip",
+      "path": "roost-bridge-v0.1.2/roost-bridge-v0.1.2.zip",
+      "size": 1147619,
+      "sha256": "05f694175be16c2fa50bbbaebee6f1a2035f0904457c914817920923587ec2af",
+      "commit": "ea7f67b03dccacd3176358339becc9fd9d884f6e",
+      "publishedAt": "2026-11-22T16:15:27.865Z"
+    },
+    {
       "id": "routine",
       "name": "作息",
       "version": "1.1.1",
@@ -1713,6 +2018,37 @@
       "sha256": "ccd91233501937f327f01be6b3b72c7b94647dd48dfa042e63530d60f9980312",
       "commit": "59be385f35fb36c6d1de3406504470b84978ef34",
       "publishedAt": "2026-11-05T12:14:07.525Z"
+    },
+    {
+      "id": "session-switch",
+      "name": "会话切换",
+      "version": "1.3.1",
+      "description": "让她把一件事带到另一个聊天：那边的她按自己的记忆和方式接住，不是把原话复制过去。认不出称呼是谁时，会把会话清单发到聊天里让对方挑，挑定才记住对应；主人和别人各有开关和可带话的范围，别人的带话默认关。",
+      "category": "social",
+      "tags": [
+        "跨会话",
+        "转达",
+        "穿透",
+        "会话清单"
+      ],
+      "author": "Cinderlia",
+      "license": "MIT",
+      "api": 1,
+      "minPluginVersion": "1.2.0",
+      "requires": [],
+      "capabilities": [
+        "filesystem",
+        "plugin-config",
+        "plugin-internals"
+      ],
+      "replacesBuiltin": false,
+      "tag": "session-switch-v1.3.1",
+      "file": "session-switch-v1.3.1.zip",
+      "path": "session-switch-v1.3.1/session-switch-v1.3.1.zip",
+      "size": 27429,
+      "sha256": "9669bc009d274b9ebbfbdcc8b8b389fd9838aa5d3070bdc6a01aff877ab953e5",
+      "commit": "ea7f67b03dccacd3176358339becc9fd9d884f6e",
+      "publishedAt": "2026-11-22T16:15:27.865Z"
     },
     {
       "id": "shitu",
@@ -2173,5 +2509,5 @@
     }
   ],
   "revoked": [],
-  "generatedAt": "2026-11-21T13:46:55.334Z"
+  "generatedAt": "2026-11-22T16:15:27.865Z"
 }
